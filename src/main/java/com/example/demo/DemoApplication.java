@@ -23,14 +23,10 @@ public class DemoApplication {
         Scheduler s = Schedulers.newParallel("test");
         s.schedule(() -> {assert(true);});
 	}
-    private static final String prometheusMetricPrefix = "actuator_";
 
     @Bean
     MeterRegistryCustomizer<PrometheusMeterRegistry> prometheusMetrics() {
-        return registry -> registry.config()
-                .namingConvention((NamingConvention) (name, type, baseUnit) -> prometheusMetricPrefix + Arrays.stream(name.split("\\."))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.joining("_")));
+        return registry -> registry.config() .namingConvention(new CustomPrometheusNamingConvention());
     }
 
 }
